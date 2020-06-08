@@ -7,11 +7,11 @@ const client = pgconn.getClient()
 var bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
-app.get('/*', async function (req, res) {
+app.get('/:redirect_to', async function (req, res) {
     console.log("hi")
-    if (!req.path)
+    if (!req.params.redirect_to)
         return
-    const key = req.path.substring(1)
+    const key = req.params.redirect_to
     const result = await client.query("SELECT * FROM REDIRECTS WHERE PATH = $1", [key])
     const rows = result.rows
     if (rows && rows.length > 0) {

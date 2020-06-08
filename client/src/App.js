@@ -5,6 +5,8 @@ import axios from 'axios'
 function App() {
   const [path, setPath] = useState("")
   const [redirect_to, setRedirect_to] = useState("")
+  const [saved, setSaved] = useState("")
+
   function handleChange(event) {
     setPath(event.target.value)
   }
@@ -17,10 +19,13 @@ function App() {
       <header className="App-header">
         Path: <input type="text" value={path} onChange={handleChange} />
         Redirect to:<input type="text" value={redirect_to} onChange={handleChangeR} />
-        <button onClick={() => {
-          axios.post("/api/savePath", { path, redirect_to })
+        <div>{saved}</div>
+        <button onClick={async () => {
+          await axios.post("/api/savePath", { path, redirect_to })
           setPath("")
           setRedirect_to("")
+          setSaved("Saved!")
+          setTimeout(() => { setSaved("") }, 2000)
         }}>Send Redirect</button>
       </header>
     </div>
