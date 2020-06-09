@@ -28,7 +28,7 @@ function App() {
         if (data && data.err) {
           setSaved(data.msg)
         } else {
-          setSavedPath(window.location.hostname + "/" + path)
+          setSavedPath(window.location.origin + "/" + path)
           setPath("")
           setRedirect_to(DEFAULT_URL)
           setSaved("Saved!")
@@ -38,13 +38,13 @@ function App() {
       </div>
       <div>
         <CopyToClipboard text={savedPath} onCopy={() => { }}>
-          <button>Copy created link: {savedPath}</button>
+          <button disabled={savedPath.length === 0}>Copy Link: {savedPath}</button>
         </CopyToClipboard>
 
       </div>
       <div>{saved}</div>
 
-      <div>V1.1</div>
+      <div>V1.2</div>
     </div>
   );
 }
