@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 const DEFAULT_URL = "https://"
+
 function App() {
   const [path, setPath] = useState("")
   const [redirect_to, setRedirect_to] = useState(DEFAULT_URL)
   const [saved, setSaved] = useState("")
+  const [savedPath, setSavedPath] = useState("")
 
   function handleChange(event) {
     setPath(event.target.value)
@@ -22,10 +25,10 @@ function App() {
         Redirect to:<input type="text" placeholder={"https://ibm.com/training"} value={redirect_to} onChange={handleChangeR} />
       <div> <button disabled={!path || !redirect_to} onClick={async () => {
         const { data } = await axios.post("/api/savePath", { path, redirect_to })
-
         if (data && data.err) {
           setSaved(data.msg)
         } else {
+          setSavedPath(window.location.hostname + "/" + path)
           setPath("")
           setRedirect_to(DEFAULT_URL)
           setSaved("Saved!")
@@ -33,7 +36,14 @@ function App() {
         setTimeout(() => { setSaved("") }, 5000)
       }}>Send Redirect</button>
       </div>
+      <div>
+        <CopyToClipboard text={savedPath} onCopy={() => { }}>
+          <button>Copy created link: {savedPath}</button>
+        </CopyToClipboard>
+
+      </div>
       <div>{saved}</div>
+
 
     </div>
   );
