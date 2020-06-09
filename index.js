@@ -22,13 +22,17 @@ app.get('/:redirect_to', async function (req, res) {
     }
 })
 app.post('/api/savePath', async function (req, res) {
-    const path = req.body.path
-    const redirect_to = req.body.redirect_to
+    let path = req.body.path
+    let redirect_to = req.body.redirect_to
     if (!path || !redirect_to)
-        return res.json({})
-
+        return res.json({ err: true, msg: `Missing required attributes` })
+    path = path.toLowerCase()
     if (!isUrl(redirect_to))
         return res.json({ err: true, msg: `Invalid url provided` })
+    const alreadyExistsResponse = await client.query("SELECT * FROM REDIRECTS WHERE PATH = $1", [path])
+    if (alreadyExistsResponse && alreadyExistsResponse.rowCount > 0) {
+        return res.json({ err: true, msg: `Path: ${path}, already exists!` })
+    }
     await client.query("INSERT INTO REDIRECTS(path, redirect_to) VALUES ($1,$2)", [path, redirect_to])
     res.json({ status: "OK", msg: "Added to DB" })
 })
