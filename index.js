@@ -21,6 +21,16 @@ app.get('/:redirect_to', async function (req, res) {
         res.json({ "msg": `no data found for this path: ${key}` })
     }
 })
+app.get('/api/mostRecent', async function (req, res) {
+    const result = await client.query("SELECT * FROM REDIRECTS WHERE last_update is not null ORDER BY last_update DESC")
+    console.log(result.rows)
+    const rows = result.rows
+    if (rows && rows.length > 0) {
+        res.json(rows[0])
+    } else {
+        res.json({ "msg": `no data found for this path: ${key}` })
+    }
+})
 app.post('/api/savePath', async function (req, res) {
     let path = req.body.path
     let redirect_to = req.body.redirect_to
