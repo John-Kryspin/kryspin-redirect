@@ -44,7 +44,7 @@ function App() {
       </div>
       <div>{saved}</div>
 
-
+      <div>V1.1</div>
     </div>
   );
 }
