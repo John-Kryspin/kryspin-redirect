@@ -19,14 +19,20 @@ function App() {
       <header className="App-header">
         Path: <input type="text" value={path} onChange={handleChange} />
         Redirect to:<input type="text" value={redirect_to} onChange={handleChangeR} />
-        <div>{saved}</div>
         <button onClick={async () => {
-          await axios.post("/api/savePath", { path, redirect_to })
-          setPath("")
-          setRedirect_to("")
-          setSaved("Saved!")
-          setTimeout(() => { setSaved("") }, 2000)
+          const { data } = await axios.post("/api/savePath", { path, redirect_to })
+
+          if (data && data.err) {
+            setSaved(data.msg)
+          } else {
+            setPath("")
+            setRedirect_to("")
+            setSaved("Saved!")
+          }
+          setTimeout(() => { setSaved("") }, 5000)
         }}>Send Redirect</button>
+        <div>{saved}</div>
+
       </header>
     </div>
   );

@@ -5,12 +5,13 @@ const pgconn = require('./pgconn')
 pgconn.connectToServer()
 const client = pgconn.getClient()
 var bodyParser = require('body-parser')
+const isUrl = require('is-url')
 app.use(bodyParser.json())
 
 app.get('/:redirect_to', async function (req, res) {
     console.log("hi")
     if (!req.params.redirect_to)
-        return
+        return res.json({ err: true, msg: `Invalid redirect provided` })
     const key = req.params.redirect_to
     const result = await client.query("SELECT * FROM REDIRECTS WHERE PATH = $1", [key])
     const rows = result.rows
@@ -24,9 +25,11 @@ app.post('/api/savePath', async function (req, res) {
     const path = req.body.path
     const redirect_to = req.body.redirect_to
     if (!path || !redirect_to)
-        return
+        return res.json({})
 
-    const result = await client.query("INSERT INTO REDIRECTS(path, redirect_to) VALUES ($1,$2)", [path, redirect_to])
+    if (!isUrl(redirect_to))
+        return res.json({ err: true, msg: `Invalid url provided` })
+    await client.query("INSERT INTO REDIRECTS(path, redirect_to) VALUES ($1,$2)", [path, redirect_to])
     res.json({ status: "OK", msg: "Added to DB" })
 })
 if (process.env.NODE_ENV === "production") {
