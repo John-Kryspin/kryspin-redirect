@@ -36,9 +36,12 @@ app.post('/api/savePath', async function (req, res) {
     let redirect_to = req.body.redirect_to
     if (!path || !redirect_to)
         return res.json({ err: true, msg: `Missing required attributes` })
+
     path = path.toLowerCase()
+
     if (!isUrl(redirect_to))
         return res.json({ err: true, msg: `Invalid url provided` })
+
     const alreadyExistsResponse = await client.query("SELECT * FROM REDIRECTS WHERE PATH = $1", [path])
     if (alreadyExistsResponse && alreadyExistsResponse.rowCount > 0) {
         return res.json({ err: true, msg: `Path: ${path}, already exists!` })
